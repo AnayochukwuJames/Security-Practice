@@ -26,33 +26,21 @@ public class AuthenticationController {
 
     @PostMapping("/sign-up")
 
-    public ResponseEntity<User> signUp(SignupRequest request){
-        if(userRepository.existsByEmail(request.getEmail())){
+    public ResponseEntity<User> signUp(SignupRequest signupRequest){
+        if(userRepository.existsByEmail(signupRequest.getEmail())){
             throw new RuntimeException("User already exist");
         }
-        User user = userRepository.save(UserMapper.mapSignUpRequestToUser(request));
+        User user = userRepository.save(UserMapper.mapSignUpRequestToUser(signupRequest));
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
-//    public ResponseEntity<User> signup(@RequestBody SignupRequest request) {
-//        if(userRepository.existsByEmail(request.getEmail())){
-//            throw new RuntimeException("User with this details has already been registered");
-//        }
-//        User user = new userRepository.save(UserMapper.mapSignUpRequestToUser(request));
-//        return new ResponseEntity<>(user, HttpStatus.CREATED);
-//        // Return the response directly without involving authenticationService
-//        return ResponseEntity.ok(user);
-//    }
 
-    //    public ResponseEntity<User> signup(@RequestBody SignupRequest request){
-//        return ResponseEntity.ok(authenticationService.signup(request));
-//    }
     @PostMapping("login")
-    public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest request){
-        return ResponseEntity.ok(authenticationService.login(request));
+    public ResponseEntity<JwtAuthenticationResponse> login(@RequestBody LoginRequest loginRequest){
+        return ResponseEntity.ok(authenticationService.login(loginRequest));
     }
     @PostMapping("refreshToken")
-    public ResponseEntity<JwtAuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request){
-        return ResponseEntity.ok(authenticationService.refreshToken(request));
+    public ResponseEntity<JwtAuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
+        return ResponseEntity.ok(authenticationService.refreshToken(refreshTokenRequest));
     }
 
 }

@@ -58,10 +58,6 @@ public class JWTServiceImp implements JWTService {
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-//    @Override
-//    public Object generateRefreshToken(HashMap<Object, Object> objectObjectHashMap, User user) {
-//        return null;
-//    }
 
     private boolean isTokenExpired(String token) {
         return extractClaims(token, Claims ::getExpiration).before(new Date());

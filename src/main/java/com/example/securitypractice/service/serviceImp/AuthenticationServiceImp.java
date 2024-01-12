@@ -22,30 +22,21 @@ import java.util.HashMap;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImp implements AuthenticationService {
-//    private  PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private  AuthenticationManager authenticationManager;
     private final JWTService jwtService;
 @Override
-    public ResponseEntity<User> signUp(SignupRequest request){
-        if(userRepository.existsByEmail(request.getEmail())){
+    public ResponseEntity<User> signUp(SignupRequest signupRequest){
+        if(userRepository.existsByEmail(signupRequest.getEmail())){
             throw new RuntimeException("User with this details has already been registered");
         }
-        User user = userRepository.save(UserMapper.mapSignUpRequestToUser(request));
+        User user = userRepository.save(UserMapper.mapSignUpRequestToUser(signupRequest));
         return new ResponseEntity<>(user, HttpStatus.CREATED);
-
-//    public User signup (SignupRequest request){
-//        User user = new User();
-//        user.setFirstName(request.getFirstName());
-//        user.setLastName(request.getLastName());
-//        user.setEmail(request.getEmail());
-//        user.setPassword(passwordEncoder.encode(request.getPassword()));
-//        return userRepository.save(user);
     }
-    public JwtAuthenticationResponse login(LoginRequest request){
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request
-                .getEmail(), request.getPassword()));
-        var user = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
+    public JwtAuthenticationResponse login(LoginRequest loginRequest){
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest
+                .getEmail(), loginRequest.getPassword()));
+        var user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() ->
                 new IllegalArgumentException("Invalid email or password"));
         var jwt = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
@@ -55,15 +46,15 @@ public class AuthenticationServiceImp implements AuthenticationService {
         return jwtAuthenticationResponse;
     }
 
-    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest request){
-        String userEmail = jwtService.extractUserName(request.getToken());
+    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest){
+        String userEmail = jwtService.extractUserName(refreshTokenRequest.getToken());
         User user = userRepository.findByEmail(userEmail).orElseThrow();
-        if (jwtService.isTokenValid(request.getToken(), user));
+        if (jwtService.isTokenValid(refreshTokenRequest.getToken(), user));
 
         var jwt = jwtService.generateToken(user);
         JwtAuthenticationResponse jwtAuthenticationResponse = new JwtAuthenticationResponse();
         jwtAuthenticationResponse.setToken(jwt);
-        jwtAuthenticationResponse.setRefreshToken(request.getToken());
+        jwtAuthenticationResponse.setRefreshToken(refreshTokenRequest.getToken());
 
         return jwtAuthenticationResponse;
     }

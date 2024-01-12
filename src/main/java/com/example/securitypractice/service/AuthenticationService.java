@@ -8,10 +8,9 @@ import com.example.securitypractice.model.User;
 import org.springframework.http.ResponseEntity;
 
 public interface AuthenticationService {
-//    User signup (SignupRequest request);
 
-    ResponseEntity<User> signUp(SignupRequest request);
+    ResponseEntity<User> signUp(SignupRequest signupRequest);
 
-    JwtAuthenticationResponse login(LoginRequest request);
-    JwtAuthenticationResponse refreshToken(RefreshTokenRequest request);
+    JwtAuthenticationResponse login(LoginRequest loginRequest);
+    JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
 }
